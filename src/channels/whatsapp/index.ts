@@ -6,7 +6,7 @@ import { streamAgent } from "@/agent/index.ts";
 import { prepareHistory } from "@/channels/prepare-history.ts";
 import { loadHistory, appendHistory } from "@/channels/chat-store.ts";
 import { log } from "@/logs/logger.ts";
-import { makeWASocket, useMultiFileAuthState, DisconnectReason } from "@whiskeysockets/baileys";
+import { makeWASocket, useMultiFileAuthState, DisconnectReason, Browsers } from "@whiskeysockets/baileys";
 import { Boom } from "@hapi/boom";
 import { existsSync, mkdirSync } from "fs";
 import { resolve } from "path";
@@ -105,7 +105,7 @@ async function start(config: AppConfig): Promise<void> {
 
         const sock = makeWASocket({
             auth: state,
-            browser: ["ForkScout", "Chrome", "120.0.0"],
+            browser: Browsers.macOS("ForkScout"),
         });
 
         // Save credentials on update
