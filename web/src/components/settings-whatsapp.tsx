@@ -12,6 +12,7 @@ import { useAuth } from "@web/lib/auth-context";
 import { AGENT_URL } from "@web/lib/api";
 import {
     MessageCircle,
+    Play,
     QrCode,
     RefreshCw,
     Shield,
@@ -31,7 +32,8 @@ interface Props {
 
 interface WhatsAppStatus {
     connected: boolean;
-    qr?: string; // base64 data URL or raw QR string
+    started?: boolean;
+    qr?: string;
     jid?: string;
 }
 
@@ -39,6 +41,7 @@ export default function WhatsAppSettings({ config, updateField, get }: Props) {
     const { token } = useAuth();
     const [status, setStatus] = useState<WhatsAppStatus | null>(null);
     const [loading, setLoading] = useState(false);
+    const [connecting, setConnecting] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -78,6 +81,25 @@ export default function WhatsAppSettings({ config, updateField, get }: Props) {
             await fetchStatus();
         } catch { /* ignore */ } finally {
             setDeleting(false);
+        }
+    };
+
+    const handleConnect = async () => {
+        if (!token) return;
+        setConnecting(true);
+        try {
+            await fetch(`${AGENT_URL}/api/whatsapp/connect`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            // Poll quickly for a few seconds to catch the QR
+            for (let i = 0; i < 5; i++) {
+                await new Promise((r) => setTimeout(r, 2000));
+                await fetchStatus();
+                if (status?.qr || status?.connected) break;
+            }
+        } catch { /* ignore */ } finally {
+            setConnecting(false);
         }
     };
 
@@ -132,10 +154,34 @@ export default function WhatsAppSettings({ config, updateField, get }: Props) {
                         </p>
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center gap-2 py-6 text-muted-foreground">
-                        <WifiOff className="h-8 w-8" />
-                        <p className="text-sm">WhatsApp channel not connected</p>
-                        <p className="text-xs">Start the agent with WhatsApp enabled to see QR code.</p>
+                    <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 p-4">
+                        <div className="flex items-center gap-3">
+                            <WifiOff className="h-5 w-5 text-muted-foreground" />
+                            <div>
+                                <p className="text-sm font-medium">
+                                    {status?.started ? "Waiting for QR…" : "Not connected"}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                    {status?.started
+                                        ? "WhatsApp channel is starting — QR code will appear shortly."
+                                        : "Start the WhatsApp channel to pair your device."}
+                                </p>
+                            </div>
+                        </div>
+                        {!status?.started && (
+                            <button
+                                onClick={handleConnect}
+                                disabled={connecting}
+                                className="flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-xs font-medium text-accent-foreground hover:bg-accent/90 disabled:opacity-50"
+                            >
+                                {connecting ? (
+                                    <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                    <Play className="h-3.5 w-3.5" />
+                                )}
+                                {connecting ? "Starting…" : "Connect"}
+                            </button>
+                        )}
                     </div>
                 )}
 

@@ -11,7 +11,7 @@ import { Boom } from "@hapi/boom";
 import { existsSync, mkdirSync } from "fs";
 import { resolve } from "path";
 import type { ModelMessage } from "ai";
-import { setWhatsAppConnected, setWhatsAppQR, setWhatsAppDisconnected } from "@/channels/whatsapp/state.ts";
+import { setWhatsAppConnected, setWhatsAppQR, setWhatsAppDisconnected, setWhatsAppStarted, getWhatsAppState } from "@/channels/whatsapp/state.ts";
 
 const logger = log("whatsapp");
 
@@ -19,6 +19,21 @@ export default {
     name: "whatsapp",
     start,
 } satisfies Channel;
+
+/** Start the WhatsApp channel from outside (e.g. dashboard API). Safe to call multiple times. */
+export function startWhatsAppChannel(): { ok: boolean; error?: string } {
+    const state = getWhatsAppState();
+    if (state.started) {
+        return { ok: true }; // already running
+    }
+    try {
+        const config = getConfig();
+        start(config);
+        return { ok: true };
+    } catch (err: any) {
+        return { ok: false, error: err.message };
+    }
+}
 
 // ── Per-chat sequential queue + abort controller ─────────────────────────────
 const chatQueues = new Map<string, Promise<void>>();
@@ -81,6 +96,7 @@ async function start(config: AppConfig): Promise<void> {
     }
 
     initAuth(config);
+    setWhatsAppStarted();
 
     logger.info(`Starting WhatsApp channel (session: ${sessionDir})`);
 
@@ -102,7 +118,7 @@ async function start(config: AppConfig): Promise<void> {
 
             if (qr) {
                 logger.info("Scan QR code in terminal to connect WhatsApp");
-                setWhatsAppQR(qr);
+                await setWhatsAppQR(qr);
             }
 
             if (connection === "close") {

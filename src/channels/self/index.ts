@@ -35,6 +35,7 @@ import { loadOrphanedMonitors, resumeMonitor } from "@/channels/self/progress-mo
 import { sendMessage } from "@/channels/telegram/api.ts";
 import { setSecret, listAliases, deleteSecret } from "@/secrets/vault.ts";
 import { getWhatsAppState } from "@/channels/whatsapp/state.ts";
+import { startWhatsAppChannel } from "@/channels/whatsapp/index.ts";
 
 const logger = log("self");
 
@@ -417,9 +418,19 @@ export function startHttpServer(config: AppConfig): void {
             }
 
             // ── WhatsApp API ─────────────────────────────────────────────────
-            // GET /api/whatsapp/status → { connected, qr, jid }
+            // GET /api/whatsapp/status → { connected, started, qr, jid }
             if (req.method === "GET" && url.pathname === "/api/whatsapp/status") {
                 return json(getWhatsAppState());
+            }
+
+            // POST /api/whatsapp/connect → start WhatsApp channel on-demand
+            if (req.method === "POST" && url.pathname === "/api/whatsapp/connect") {
+                const result = startWhatsAppChannel();
+                if (result.ok) {
+                    logger.info("WhatsApp channel started via dashboard API");
+                    return json({ ok: true });
+                }
+                return json({ ok: false, error: result.error }, 500);
             }
 
             // DELETE /api/whatsapp/session → wipe session dir to force re-pair
