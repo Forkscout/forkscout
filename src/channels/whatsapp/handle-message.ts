@@ -11,9 +11,9 @@ import { prepareHistory } from "@/channels/prepare-history.ts";
 import { loadHistory, appendHistory } from "@/channels/chat-store.ts";
 import { log } from "@/logs/logger.ts";
 import { makeWASocket } from "@whiskeysockets/baileys";
-import type { ModelMessage } from "ai";
 import { getRole } from "@/channels/whatsapp/auth.ts";
 import { sleep, splitText } from "@/channels/whatsapp/utils.ts";
+import { compileWhatsAppMessage } from "@/channels/whatsapp/compile-message.ts";
 
 const logger = log("whatsapp");
 
@@ -84,14 +84,14 @@ export function processIncomingMessages(sock: Sock, messages: any[]): void {
         }
 
         logger.info(`[${role}] ${senderName}: ${text.slice(0, 80)}`);
-        enqueueMessage(config, sock, remoteJid, senderJid, senderName, text, role, wa);
+        enqueueMessage(config, sock, remoteJid, senderJid, senderName, msg, role, wa);
     }
 }
 
 /** Enqueue a validated message for sequential processing per chat. */
 function enqueueMessage(
     config: AppConfig, sock: Sock, remoteJid: string, senderJid: string,
-    senderName: string, text: string, role: "owner" | "user", wa: AppConfig["whatsapp"],
+    senderName: string, rawMsg: any, role: "owner" | "user", wa: AppConfig["whatsapp"],
 ): void {
     const isGroup = remoteJid.endsWith("@g.us");
     const chatKey = isGroup ? remoteJid : senderJid;
@@ -107,7 +107,7 @@ function enqueueMessage(
     const prevPromise = chatQueues.get(chatKey) ?? Promise.resolve();
     const next = prevPromise.then(() => {
         if (controller.signal.aborted) return;
-        return handleMessage(config, sock, remoteJid, senderName, text, role, sessionKey, wa, controller.signal)
+        return handleMessage(config, sock, remoteJid, senderName, rawMsg, role, sessionKey, wa, controller.signal)
             .catch(async (err) => {
                 if (err instanceof Error && (err.name === "AbortError" || err.message?.includes("aborted"))) {
                     logger.info(`[abort] Task aborted for ${chatKey}`);
@@ -124,10 +124,11 @@ function enqueueMessage(
 /** Stream the agent response and send it back to the WhatsApp user. */
 async function handleMessage(
     config: AppConfig, sock: Sock, remoteJid: string, senderName: string,
-    text: string, role: "owner" | "user", sessionKey: string,
+    rawMsg: any, role: "owner" | "user", sessionKey: string,
     wa: AppConfig["whatsapp"], abortSignal: AbortSignal,
 ): Promise<void> {
-    appendHistory(sessionKey, [{ role: "user", content: text } as ModelMessage]);
+    const compiledMsg = compileWhatsAppMessage(rawMsg);
+    appendHistory(sessionKey, [compiledMsg]);
 
     const allHistory = prepareHistory(
         loadHistory(sessionKey),
@@ -135,6 +136,9 @@ async function handleMessage(
     );
     const chatHistory = allHistory.slice(0, -1);
     const roleTag = role === "owner" ? "OWNER" : "USER";
+    const rawContent = typeof compiledMsg.content === "string"
+        ? compiledMsg.content
+        : JSON.stringify(compiledMsg.content);
 
     await sock.sendPresenceUpdate("composing", remoteJid).catch(() => { });
     let composingActive = true;
@@ -144,7 +148,7 @@ async function handleMessage(
 
     try {
         const stream = await streamAgent(config, {
-            userMessage: `[${roleTag}] [${senderName}] ${text}`,
+            userMessage: `[${roleTag}] ${rawContent}`,
             chatHistory, role,
             meta: { channel: "whatsapp", chatId: remoteJid },
             abortSignal,
