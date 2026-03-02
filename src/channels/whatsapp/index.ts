@@ -1,22 +1,18 @@
 // src/channels/whatsapp/index.ts — WhatsApp Baileys channel
-//
-// Connection behavior matches WhatsApp Web exactly:
-//   - Unregistered: ONE connection attempt. Server sends QR (refreshes ~5 times
-//     within the same connection). If connection closes → STOP. User clicks
-//     "Connect" again in dashboard (like Chrome's "Click to reload QR").
-//   - Registered (already paired): auto-reconnect on disconnect with backoff.
-//   - restartRequired (515): always auto-reconnect (pairing success flow).
-//
-// Pairing code flow: POST /api/whatsapp/connect { phoneNumber: "1234567890" }
-// QR code flow:      POST /api/whatsapp/connect (no body)
+// Unregistered: single attempt, no retry. Registered: auto-reconnect.
+// Pairing code: POST /api/whatsapp/connect { phoneNumber }  |  QR: POST (no body)
 
 import { getConfig, type AppConfig } from "@/config.ts";
 import type { Channel } from "@/channels/types.ts";
 import { log } from "@/logs/logger.ts";
-import { makeWASocket, useMultiFileAuthState, DisconnectReason, Browsers } from "@whiskeysockets/baileys";
+import {
+    makeWASocket, useMultiFileAuthState, DisconnectReason, Browsers,
+    fetchLatestBaileysVersion, makeCacheableSignalKeyStore,
+} from "@whiskeysockets/baileys";
 import { Boom } from "@hapi/boom";
 import { existsSync, mkdirSync, rmSync } from "fs";
 import { resolve } from "path";
+import { makeSilentLogger } from "@/channels/whatsapp/baileys-logger.ts";
 import {
     setWhatsAppConnected, setWhatsAppQR, resetWhatsAppState,
     setWhatsAppStarted, setWhatsAppPairingCode, getWhatsAppState,
@@ -85,6 +81,9 @@ async function start(config: AppConfig): Promise<void> {
     let stopChannel: () => void;
     const running = new Promise<void>((resolve) => { stopChannel = resolve; });
 
+    const { version } = await fetchLatestBaileysVersion();
+    logger.info(`WA version ${version.join(".")}, session: ${sessionDir}`);
+
     const connectSocket = async (): Promise<void> => {
         const { state: authState, saveCreds } = await useMultiFileAuthState(sessionDir);
         const isRegistered = authState.creds.registered;
@@ -97,11 +96,26 @@ async function start(config: AppConfig): Promise<void> {
             );
         }
 
+        const baileysLogger = makeSilentLogger();
         const sock = makeWASocket({
-            auth: authState,
+            auth: {
+                creds: authState.creds,
+                keys: makeCacheableSignalKeyStore(authState.keys, baileysLogger),
+            },
+            version,
+            logger: baileysLogger,
             browser: Browsers.macOS("ForkScout"),
+            syncFullHistory: false,
+            markOnlineOnConnect: false,
             getMessage: async (_key) => undefined,
         });
+
+        // Handle WebSocket-level errors (prevent unhandled crashes)
+        if (sock.ws && typeof (sock.ws as any).on === "function") {
+            (sock.ws as any).on("error", (err: Error) => {
+                logger.error(`WebSocket error: ${err.message}`);
+            });
+        }
 
         sock.ev.on("creds.update", saveCreds);
 
