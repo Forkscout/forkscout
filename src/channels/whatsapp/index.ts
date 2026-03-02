@@ -11,6 +11,7 @@ import { Boom } from "@hapi/boom";
 import { existsSync, mkdirSync } from "fs";
 import { resolve } from "path";
 import type { ModelMessage } from "ai";
+import { setWhatsAppConnected, setWhatsAppQR, setWhatsAppDisconnected } from "@/channels/whatsapp/state.ts";
 
 const logger = log("whatsapp");
 
@@ -101,6 +102,7 @@ async function start(config: AppConfig): Promise<void> {
 
             if (qr) {
                 logger.info("Scan QR code in terminal to connect WhatsApp");
+                setWhatsAppQR(qr);
             }
 
             if (connection === "close") {
@@ -109,6 +111,7 @@ async function start(config: AppConfig): Promise<void> {
 
                 if (reason === DisconnectReason.loggedOut) {
                     logger.error("Logged out — delete session dir and re-scan QR code");
+                    setWhatsAppDisconnected();
                     return; // Don't reconnect — user logged out
                 }
 
@@ -118,6 +121,7 @@ async function start(config: AppConfig): Promise<void> {
                 connectSocket(); // Recursive reconnect
             } else if (connection === "open") {
                 logger.info("Connected to WhatsApp!");
+                setWhatsAppConnected(sock.user?.id ?? "");
             }
         });
 

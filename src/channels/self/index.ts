@@ -27,12 +27,14 @@ import { log } from "@/logs/logger.ts";
 import { encode } from "gpt-tokenizer";
 import type { ModelMessage } from "ai";
 import cron from "node-cron";
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from "fs";
+import { existsSync, readFileSync, writeFileSync, mkdirSync, rmSync } from "fs";
 import { resolve } from "path";
 import { handleListModels, handleChatCompletion, handleGetHistory, handleClearHistory } from "./openai-compat.ts";
 import { setupRegistry, registerJob, unregisterJob } from "@/channels/self/cron-registry.ts";
 import { loadOrphanedMonitors, resumeMonitor } from "@/channels/self/progress-monitor.ts";
 import { sendMessage } from "@/channels/telegram/api.ts";
+import { setSecret, listAliases, deleteSecret } from "@/secrets/vault.ts";
+import { getWhatsAppState } from "@/channels/whatsapp/state.ts";
 
 const logger = log("self");
 
@@ -348,6 +350,93 @@ export function startHttpServer(config: AppConfig): void {
                 return handleChatCompletion(getConfig(), body, "owner");
             }
 
+            // ── Config API ───────────────────────────────────────────────────
+            // GET /api/config → current forkscout.config.json
+            if (req.method === "GET" && url.pathname === "/api/config") {
+                try {
+                    const configPath = resolve(import.meta.dir, "..", "..", "forkscout.config.json");
+                    const raw = readFileSync(configPath, "utf-8");
+                    return new Response(raw, {
+                        status: 200,
+                        headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+                    });
+                } catch (err: any) {
+                    return json({ ok: false, error: err.message }, 500);
+                }
+            }
+
+            // PUT /api/config → write full config JSON to disk (triggers hot-reload)
+            if (req.method === "PUT" && url.pathname === "/api/config") {
+                try {
+                    const body = await req.text();
+                    // Validate it's valid JSON before writing
+                    JSON.parse(body);
+                    const configPath = resolve(import.meta.dir, "..", "..", "forkscout.config.json");
+                    writeFileSync(configPath, body, "utf-8");
+                    logger.info("Config updated via dashboard API");
+                    return json({ ok: true });
+                } catch (err: any) {
+                    return json({ ok: false, error: err.message }, 400);
+                }
+            }
+
+            // ── Secrets API ──────────────────────────────────────────────────
+            // GET /api/secrets → list alias names only (never values)
+            if (req.method === "GET" && url.pathname === "/api/secrets") {
+                return json({ ok: true, aliases: listAliases() });
+            }
+
+            // POST /api/secrets → store { alias, value }
+            if (req.method === "POST" && url.pathname === "/api/secrets") {
+                try {
+                    const { alias, value } = (await req.json()) as { alias?: string; value?: string };
+                    if (!alias || typeof alias !== "string" || !/^[a-zA-Z0-9_\-]+$/.test(alias)) {
+                        return json({ ok: false, error: "alias must be alphanumeric/underscore/dash" }, 400);
+                    }
+                    if (!value || typeof value !== "string") {
+                        return json({ ok: false, error: "value is required" }, 400);
+                    }
+                    setSecret(alias, value);
+                    logger.info(`Secret "${alias}" stored via dashboard API`);
+                    return json({ ok: true });
+                } catch (err: any) {
+                    return json({ ok: false, error: err.message }, 400);
+                }
+            }
+
+            // DELETE /api/secrets?alias=NAME → delete a secret
+            if (req.method === "DELETE" && url.pathname === "/api/secrets") {
+                const alias = url.searchParams.get("alias");
+                if (!alias) return json({ ok: false, error: "alias query param required" }, 400);
+                const deleted = deleteSecret(alias);
+                if (deleted) {
+                    logger.info(`Secret "${alias}" deleted via dashboard API`);
+                    return json({ ok: true });
+                }
+                return json({ ok: false, error: `Secret "${alias}" not found` }, 404);
+            }
+
+            // ── WhatsApp API ─────────────────────────────────────────────────
+            // GET /api/whatsapp/status → { connected, qr, jid }
+            if (req.method === "GET" && url.pathname === "/api/whatsapp/status") {
+                return json(getWhatsAppState());
+            }
+
+            // DELETE /api/whatsapp/session → wipe session dir to force re-pair
+            if (req.method === "DELETE" && url.pathname === "/api/whatsapp/session") {
+                try {
+                    const cfg = getConfig();
+                    const sessionDir = resolve(process.cwd(), cfg.whatsapp?.sessionDir ?? ".agents/whatsapp-sessions");
+                    if (existsSync(sessionDir)) {
+                        rmSync(sessionDir, { recursive: true, force: true });
+                        logger.info("WhatsApp session deleted via dashboard API");
+                    }
+                    return json({ ok: true });
+                } catch (err: any) {
+                    return json({ ok: false, error: err.message }, 500);
+                }
+            }
+
             // ── Trigger ──────────────────────────────────────────────────────
             if (req.method === "POST" && url.pathname === "/trigger") {
                 let body: unknown;
@@ -456,7 +545,7 @@ async function handleHttpMessage(
 
 const CORS_HEADERS: Record<string, string> = {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
