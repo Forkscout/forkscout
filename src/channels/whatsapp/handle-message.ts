@@ -14,6 +14,7 @@ import { makeWASocket } from "@whiskeysockets/baileys";
 import { getRole } from "@/channels/whatsapp/auth.ts";
 import { sleep, splitText } from "@/channels/whatsapp/utils.ts";
 import { compileWhatsAppMessage } from "@/channels/whatsapp/compile-message.ts";
+import { cacheMessage } from "@/channels/whatsapp/state.ts";
 
 const logger = log("whatsapp");
 
@@ -48,6 +49,12 @@ function extractText(message: any): string {
     return "";
 }
 
+/** Check if a Baileys message contains media (image, video, audio, document, sticker). */
+function hasMedia(message: any): boolean {
+    return !!(message.imageMessage || message.videoMessage || message.audioMessage
+        || message.documentMessage || message.stickerMessage);
+}
+
 /** Process a batch of incoming messages from a Baileys messages.upsert event. */
 export function processIncomingMessages(sock: Sock, messages: any[]): void {
     const config = getConfig();
@@ -62,7 +69,8 @@ export function processIncomingMessages(sock: Sock, messages: any[]): void {
         if (!msg.message) continue;
 
         const text = extractText(msg.message);
-        if (!text.trim()) continue;
+        const media = hasMedia(msg.message);
+        if (!text.trim() && !media) continue;
 
         const isGroup = remoteJid.endsWith("@g.us");
         const senderJid = isGroup ? (msg.key.participant ?? remoteJid) : remoteJid;
@@ -84,6 +92,7 @@ export function processIncomingMessages(sock: Sock, messages: any[]): void {
         }
 
         logger.info(`[${role}] ${senderName}: ${text.slice(0, 80)}`);
+        if (msg.key.id) cacheMessage(msg.key.id, msg);
         enqueueMessage(config, sock, remoteJid, senderJid, senderName, msg, role, wa);
     }
 }

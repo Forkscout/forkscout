@@ -2,8 +2,12 @@
 //
 // The WhatsApp channel writes to this module; the self-channel HTTP server reads from it.
 // This avoids coupling the two channels directly.
+// Also exposes the live socket + recent message cache for tools (e.g. media download).
 
 import QRCode from "qrcode";
+import type { makeWASocket } from "@whiskeysockets/baileys";
+
+type Sock = ReturnType<typeof makeWASocket>;
 
 export interface WhatsAppState {
     connected: boolean;
@@ -18,6 +22,34 @@ const state: WhatsAppState = {
     qr: "",
     jid: "",
 };
+
+// ── Live socket reference (for tools like media download) ────────────────────
+let activeSock: Sock | null = null;
+export function setActiveSock(sock: Sock): void { activeSock = sock; }
+export function getActiveSock(): Sock | null { return activeSock; }
+
+// ── Recent message cache — keyed by msg id, expires after 1h ─────────────────
+// Tools call getRecentMessage(id) to get the raw WAMessage for downloadMediaMessage.
+const MESSAGE_TTL = 60 * 60 * 1000; // 1 hour
+const recentMessages = new Map<string, { msg: any; ts: number }>();
+
+export function cacheMessage(msgId: string, msg: any): void {
+    recentMessages.set(msgId, { msg, ts: Date.now() });
+    // Lazy cleanup: evict expired entries when cache grows
+    if (recentMessages.size > 500) {
+        const now = Date.now();
+        for (const [k, v] of recentMessages) {
+            if (now - v.ts > MESSAGE_TTL) recentMessages.delete(k);
+        }
+    }
+}
+
+export function getRecentMessage(msgId: string): any | null {
+    const entry = recentMessages.get(msgId);
+    if (!entry) return null;
+    if (Date.now() - entry.ts > MESSAGE_TTL) { recentMessages.delete(msgId); return null; }
+    return entry.msg;
+}
 
 export function setWhatsAppStarted(): void {
     state.started = true;

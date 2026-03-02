@@ -15,7 +15,7 @@ import { resolve } from "path";
 import { makeSilentLogger } from "@/channels/whatsapp/baileys-logger.ts";
 import {
     setWhatsAppConnected, setWhatsAppQR, resetWhatsAppState,
-    setWhatsAppStarted, getWhatsAppState,
+    setWhatsAppStarted, getWhatsAppState, setActiveSock,
 } from "@/channels/whatsapp/state.ts";
 import { initAuth } from "@/channels/whatsapp/auth.ts";
 import { processIncomingMessages } from "@/channels/whatsapp/handle-message.ts";
@@ -90,6 +90,8 @@ async function start(config: AppConfig): Promise<void> {
             markOnlineOnConnect: false,
             getMessage: async (_key) => undefined,
         });
+
+        setActiveSock(sock);
 
         // Handle WebSocket-level errors (prevent unhandled crashes)
         if (sock.ws && typeof (sock.ws as any).on === "function") {
