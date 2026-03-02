@@ -6,6 +6,11 @@ import terminalChannel from "@/channels/terminal/index.ts";
 import selfChannel, { startCronJobs, startHttpServer, checkOrphanedMonitors } from "@/channels/self/index.ts";
 import whatsappChannel from "@/channels/whatsapp/index.ts";
 import { startWhatsAppChannel, hasWhatsAppCredentials } from "@/channels/whatsapp/index.ts";
+import discordChannel from "@/channels/discord/index.ts";
+import slackChannel from "@/channels/slack/index.ts";
+import emailChannel from "@/channels/email/index.ts";
+import matrixChannel from "@/channels/matrix/index.ts";
+import webchatChannel from "@/channels/webchat/index.ts";
 import { log } from "@/logs/logger.ts";
 import { populateEnvFromVault } from "@/secrets/vault.ts";
 
@@ -33,7 +38,10 @@ const channelName = process.argv.includes("--cli")
             ? "whatsapp"
             : "telegram";
 
-const channels: Channel[] = [telegramChannel, terminalChannel, selfChannel, whatsappChannel];
+const channels: Channel[] = [
+    telegramChannel, terminalChannel, selfChannel, whatsappChannel,
+    discordChannel, slackChannel, emailChannel, matrixChannel, webchatChannel,
+];
 const channel = channels.find((c) => c.name === channelName);
 
 if (!channel) throw new Error(`Unknown channel: ${channelName}`);
@@ -54,6 +62,12 @@ if (channelName === "telegram" || channelName === "terminal") {
             startWhatsAppChannel();
         } else {
             logger.info("WhatsApp not paired yet — use Dashboard → Settings → WhatsApp to connect");
+        }
+
+        // Auto-start optional channels if their env vars are set
+        const autoChannels = [discordChannel, slackChannel, emailChannel, matrixChannel];
+        for (const ch of autoChannels) {
+            ch.start(config).catch((err) => logger.warn(`${ch.name} channel skipped: ${err.message}`));
         }
     } else {
         logger.info("Smoke mode — HTTP server, cron jobs, and orphan monitor disabled");
