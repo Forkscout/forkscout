@@ -54,8 +54,8 @@ export function TerminalDemo() {
     return (
         <section className="relative mx-auto max-w-3xl px-4 py-16 sm:px-6">
             <motion.div
-                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ duration: 0.7 }}
+                initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7 }}
             >
                 <div className="overflow-hidden rounded-2xl border border-border/50 bg-black/80 shadow-2xl shadow-purple-500/5 backdrop-blur-xl">
                     {/* Title bar */}

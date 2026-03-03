@@ -16,9 +16,9 @@ const codeLines = [
 ];
 
 const fadeBlur: Variants = {
-    hidden: { opacity: 0, y: 24, filter: "blur(10px)" },
+    hidden: { opacity: 0, y: 24 },
     show: {
-        opacity: 1, y: 0, filter: "blur(0px)",
+        opacity: 1, y: 0,
         transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
     },
 };
@@ -36,20 +36,13 @@ export function ProvidersSection() {
             </div>
 
             {/* Heading */}
-            <motion.div
-                variants={fadeBlur} initial="hidden" whileInView="show"
-                viewport={{ once: true, margin: "-100px" }}
-                className="mb-16 text-center"
-            >
-                <motion.span
+            <div className="mb-16 text-center">
+                <span
                     className="mb-4 inline-block rounded-full border border-amber-500/20 bg-amber-500/5 px-4 py-1.5 text-xs font-medium tracking-wider text-amber-600 uppercase dark:border-amber-400/20 dark:text-amber-400"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
                 >
                     <Layers className="mr-1.5 inline h-3 w-3" />
                     Provider Agnostic
-                </motion.span>
+                </span>
                 <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
                     <span className="bg-linear-to-r from-amber-500 via-pink-500 to-purple-600 bg-clip-text text-transparent dark:from-amber-400 dark:via-pink-400 dark:to-purple-400">
                         9 LLM providers.
@@ -59,21 +52,15 @@ export function ProvidersSection() {
                 <p className="mx-auto mt-4 max-w-md text-base text-muted-foreground sm:text-lg">
                     Swap providers and model tiers without touching code.
                 </p>
-            </motion.div>
+            </div>
 
             {/* Provider badges */}
-            <motion.div
-                variants={fadeBlur} initial="hidden" whileInView="show"
-                viewport={{ once: true, margin: "-50px" }}
+            <div
                 className="mb-14 flex flex-wrap justify-center gap-3"
             >
                 {providers.map((p, i) => (
                     <motion.span
                         key={p.slug}
-                        initial={{ opacity: 0, scale: 0.85, filter: "blur(6px)" }}
-                        whileInView={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.4, delay: i * 0.05 }}
                         whileHover={{ y: -2, scale: 1.06 }}
                         className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${badgeStyle[p.color]}`}
                     >
@@ -88,12 +75,10 @@ export function ProvidersSection() {
                         {p.name}
                     </motion.span>
                 ))}
-            </motion.div>
+            </div>
 
             {/* Code block */}
-            <motion.div
-                variants={fadeBlur} initial="hidden" whileInView="show"
-                viewport={{ once: true, margin: "-50px" }}
+            <div
                 className="mx-auto max-w-xl"
             >
                 <div className="overflow-hidden rounded-2xl border border-border/40 bg-card/60 backdrop-blur-sm">
@@ -119,7 +104,7 @@ export function ProvidersSection() {
                         </pre>
                     </div>
                 </div>
-            </motion.div>
+            </div>
         </section>
     );
 }

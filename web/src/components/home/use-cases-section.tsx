@@ -62,9 +62,9 @@ const colors: Record<string, ColorDef> = {
 };
 
 const fadeBlur: Variants = {
-    hidden: { opacity: 0, y: 30, filter: "blur(10px)" },
+    hidden: { opacity: 0, y: 30 },
     show: {
-        opacity: 1, y: 0, filter: "blur(0px)",
+        opacity: 1, y: 0,
         transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
     },
 };
@@ -72,21 +72,12 @@ const fadeBlur: Variants = {
 export function UseCasesSection() {
     return (
         <section id="use-cases" className="relative mx-auto max-w-6xl px-4 py-28 sm:px-6">
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.6 }}
-                className="mb-16 text-center"
-            >
-                <motion.span
+            <div className="mb-16 text-center">
+                <span
                     className="mb-4 inline-block rounded-full border border-cyan-500/20 bg-cyan-500/5 px-4 py-1.5 text-xs font-medium tracking-wider text-cyan-600 uppercase dark:border-cyan-400/20 dark:text-cyan-400"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
                 >
                     Use Cases
-                </motion.span>
+                </span>
                 <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
                     What can you{" "}
                     <span className="bg-linear-to-r from-cyan-500 via-purple-500 to-pink-500 bg-clip-text text-transparent dark:from-cyan-400 dark:via-purple-400 dark:to-pink-400">
@@ -96,7 +87,7 @@ export function UseCasesSection() {
                 <p className="mx-auto mt-4 max-w-lg text-base text-muted-foreground sm:text-lg">
                     From DevOps to research — one agent, infinite workflows.
                 </p>
-            </motion.div>
+            </div>
 
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {useCases.map((uc, i) => {
@@ -106,8 +97,7 @@ export function UseCasesSection() {
                             key={uc.title}
                             variants={fadeBlur}
                             initial="hidden"
-                            whileInView="show"
-                            viewport={{ once: true, margin: "-40px" }}
+                            animate="show"
                             transition={{ delay: i * 0.07 }}
                         >
                             <motion.div

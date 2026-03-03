@@ -15,9 +15,7 @@ export function CtaSection() {
             <div className="mb-20 h-px bg-linear-to-r from-transparent via-purple-500/20 to-transparent" />
 
             {/* Animated gradient border card */}
-            <motion.div variants={fadeBlur} initial="hidden" whileInView="show"
-                viewport={{ once: true, margin: "-100px" }}
-                className="relative mx-auto max-w-2xl">
+            <div className="relative mx-auto max-w-2xl">
                 {/* Rotating gradient border */}
                 <div className="absolute -inset-[1px] rounded-3xl bg-linear-to-r from-purple-500/50 via-cyan-500/50 to-pink-500/50 opacity-60 blur-sm transition-opacity duration-500 hover:opacity-100" />
                 <div
@@ -61,13 +59,12 @@ export function CtaSection() {
                         </motion.div>
                     </div>
                 </div>
-            </motion.div>
+            </div>
 
             {/* Footer */}
             <div className="mt-20 h-px bg-linear-to-r from-transparent via-border/40 to-transparent" />
 
-            <motion.footer initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-                transition={{ duration: 0.5 }} className="flex flex-col items-center gap-4 py-10 text-center">
+            <footer className="flex flex-col items-center gap-4 py-10 text-center">
                 <div className="flex items-center gap-6 text-sm text-muted-foreground">
                     <a href="https://github.com/marsnext/forkscout" target="_blank" rel="noopener noreferrer"
                         className="transition-colors hover:text-foreground">GitHub</a>
@@ -84,7 +81,7 @@ export function CtaSection() {
                     </a>
                     <span className="text-muted-foreground/40">·</span> Open source under MIT
                 </p>
-            </motion.footer>
+            </footer>
         </section>
     );
 }

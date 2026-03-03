@@ -42,7 +42,7 @@ export function HeroSection() {
                 variants={container}
                 initial="hidden"
                 animate="show"
-                className="relative z-10 flex w-full max-w-3xl flex-col items-center gap-6"
+                className="relative z-10 flex w-full max-w-3xl flex-col items-center gap-5"
             >
                 <motion.div variants={child}>
                     <ForkScoutLogo size={80} className="drop-shadow-[0_0_16px_rgba(168,85,247,0.4)]" />
@@ -57,7 +57,7 @@ export function HeroSection() {
 
                 <motion.h1
                     variants={child}
-                    className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
+                    className="text-5xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
                 >
                     Meet{" "}
                     <span className="bg-linear-to-r from-purple-500 via-cyan-400 to-pink-500 bg-clip-text text-transparent dark:from-purple-400 dark:via-cyan-300 dark:to-pink-400">
@@ -71,7 +71,7 @@ export function HeroSection() {
 
                 <motion.p
                     variants={child}
-                    className="max-w-xl text-lg leading-relaxed text-muted-foreground sm:text-xl"
+                    className="max-w-xl leading-relaxed text-muted-foreground sm:text-xl"
                 >
                     An autonomous AI agent that runs shell commands, browses the web,
                     reads and writes files, remembers everything, and modifies its own

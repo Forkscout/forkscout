@@ -41,14 +41,13 @@ export function FeaturesSection() {
     return (
         <section id="features" className="relative mx-auto max-w-6xl px-4 py-28 sm:px-6">
             <motion.div
-                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }}
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
                 className="mb-16 text-center"
             >
-                <motion.span className="mb-4 inline-block rounded-full border border-purple-500/20 bg-purple-500/5 px-4 py-1.5 text-xs font-medium tracking-wider text-purple-600 uppercase dark:border-purple-400/20 dark:text-purple-400"
-                    initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}>
+                <span className="mb-4 inline-block rounded-full border border-purple-500/20 bg-purple-500/5 px-4 py-1.5 text-xs font-medium tracking-wider text-purple-600 uppercase dark:border-purple-400/20 dark:text-purple-400">
                     Capabilities
-                </motion.span>
+                </span>
                 <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
                     Built for{" "}
                     <span className="bg-linear-to-r from-purple-600 via-cyan-500 to-pink-500 bg-clip-text text-transparent dark:from-purple-400 dark:via-cyan-400 dark:to-pink-400">real autonomy</span>
@@ -67,13 +66,12 @@ export function FeaturesSection() {
 function BentoCard({ feature: f, index: i }: { feature: typeof features[0]; index: number }) {
     const c = colors[f.color];
     return (
-        <motion.div variants={fadeBlur} initial="hidden" whileInView="show"
-            viewport={{ once: true, margin: "-40px" }} transition={{ delay: i * 0.05 }}
+        <motion.div whileHover={{ y: -4, scale: 1.01 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
             className={`group ${f.span}`}>
             <motion.div whileHover={{ y: -4, scale: 1.01 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                className="relative h-full overflow-hidden rounded-2xl border border-border/50 bg-card/80 p-6 ring-1 ring-transparent transition-colors duration-300 hover:shadow-2xl sm:bg-card/40 sm:backdrop-blur-md"
-                style={{ willChange: "transform" }}>
+                className="relative h-full overflow-hidden rounded-2xl border border-border/50 bg-card/80 p-6 ring-1 ring-transparent transition-colors duration-300 hover:shadow-2xl sm:bg-card/40 sm:backdrop-blur-md">
                 {/* Animated gradient border on hover */}
                 <div className={`pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100 ${c.ring}`}
                     style={{ background: "linear-gradient(135deg, transparent, transparent)" }} />

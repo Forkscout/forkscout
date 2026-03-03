@@ -8,9 +8,9 @@ import { channels, typeLabels, type ChannelItem } from "./channels-data";
 const types = ["all", "core", "gateway", "webhook", "polling"] as const;
 
 const fadeBlur: Variants = {
-    hidden: { opacity: 0, y: 24, filter: "blur(10px)" },
+    hidden: { opacity: 0, y: 24 },
     show: {
-        opacity: 1, y: 0, filter: "blur(0px)",
+        opacity: 1, y: 0,
         transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
     },
 };
@@ -31,20 +31,13 @@ export function ChannelsSection() {
             </div>
 
             {/* Heading */}
-            <motion.div
-                variants={fadeBlur} initial="hidden" whileInView="show"
-                viewport={{ once: true, margin: "-100px" }}
-                className="mb-12 text-center"
-            >
-                <motion.span
+            <div className="mb-12 text-center">
+                <span
                     className="mb-4 inline-block rounded-full border border-cyan-500/20 bg-cyan-500/5 px-4 py-1.5 text-xs font-medium tracking-wider text-cyan-600 uppercase dark:border-cyan-400/20 dark:text-cyan-400"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
                 >
                     <Radio className="mr-1.5 inline h-3 w-3" />
                     Multi-Channel
-                </motion.span>
+                </span>
                 <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
                     <span className="bg-linear-to-r from-cyan-500 via-purple-500 to-pink-500 bg-clip-text text-transparent dark:from-cyan-400 dark:via-purple-400 dark:to-pink-400">
                         20 channels.
@@ -55,12 +48,10 @@ export function ChannelsSection() {
                     Same adapter pattern everywhere — raw JSON in, agent reply out.
                     Set env vars and it auto-starts.
                 </p>
-            </motion.div>
+            </div>
 
             {/* Filter tabs */}
-            <motion.div
-                variants={fadeBlur} initial="hidden" whileInView="show"
-                viewport={{ once: true, margin: "-50px" }}
+            <div
                 className="mb-8 flex flex-wrap justify-center gap-2"
             >
                 {types.map(t => {
@@ -79,12 +70,12 @@ export function ChannelsSection() {
                         </button>
                     );
                 })}
-            </motion.div>
+            </div>
 
             {/* Channel grid */}
             <motion.div
                 layout
-                className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+                className="grid gap-3 grid-cols-2 lg:grid-cols-4"
             >
                 {filtered.map((ch, i) => (
                     <ChannelCard key={ch.name} channel={ch} index={i} />
@@ -92,14 +83,12 @@ export function ChannelsSection() {
             </motion.div>
 
             {/* Bottom note */}
-            <motion.p
-                variants={fadeBlur} initial="hidden" whileInView="show"
-                viewport={{ once: true }}
+            <p
                 className="mt-10 text-center text-sm text-muted-foreground"
             >
                 Each channel is ~60-80 lines of code. All share the same adapter —
                 <code className="mx-1 rounded bg-muted px-1.5 py-0.5 text-xs font-mono">createChannelHandler()</code>
-            </motion.p>
+            </p>
         </section>
     );
 }
@@ -111,8 +100,7 @@ function ChannelCard({ channel: ch, index }: { channel: ChannelItem; index: numb
             layout
             variants={fadeBlur}
             initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-20px" }}
+            animate="show"
             transition={{ delay: index * 0.03 }}
         >
             <motion.div
