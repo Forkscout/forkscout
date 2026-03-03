@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Github, Heart } from "lucide-react";
 
 const fadeBlur: Variants = {
-    hidden: { opacity: 0, y: 24, filter: "blur(10px)" },
-    show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } },
+    hidden: { opacity: 0, y: 24 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } },
 };
 
 export function CtaSection() {
@@ -20,11 +20,9 @@ export function CtaSection() {
                 className="relative mx-auto max-w-2xl">
                 {/* Rotating gradient border */}
                 <div className="absolute -inset-[1px] rounded-3xl bg-linear-to-r from-purple-500/50 via-cyan-500/50 to-pink-500/50 opacity-60 blur-sm transition-opacity duration-500 hover:opacity-100" />
-                <motion.div
-                    className="absolute -inset-[1px] rounded-3xl"
+                <div
+                    className="absolute -inset-[1px] animate-spin rounded-3xl [animation-duration:8s]"
                     style={{ background: "conic-gradient(from 0deg, #a855f7, #22d3ee, #ec4899, #a855f7)" }}
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                 />
 
                 <div className="relative flex flex-col items-center gap-6 rounded-3xl bg-background/95 px-8 py-12 text-center backdrop-blur-xl sm:px-12">

@@ -22,6 +22,7 @@ export function TechMarquee() {
             {/* Marquee with interactive cards */}
             <motion.div
                 className="flex w-max gap-5"
+                style={{ willChange: "transform" }}
                 animate={{ x: ["0%", "-50%"] }}
                 transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
             >
@@ -30,7 +31,7 @@ export function TechMarquee() {
                         key={`${item.name}-${i}`}
                         whileHover={{ y: -6, scale: 1.05 }}
                         transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                        className="group flex h-28 w-64 shrink-0 cursor-default flex-col gap-2 rounded-2xl border border-border/30 bg-card/40 p-4 backdrop-blur-sm transition-all duration-300 hover:border-border/60 hover:bg-card/60 hover:shadow-xl"
+                        className="group flex h-28 w-64 shrink-0 cursor-default flex-col gap-2 rounded-2xl border border-border/30 bg-card/80 p-4 transition-colors duration-300 hover:border-border/60 hover:bg-card hover:shadow-xl sm:bg-card/40 sm:backdrop-blur-sm"
                     >
                         <div className="flex items-center gap-2.5">
                             <div className={`inline-flex rounded-lg ${item.bg} p-1.5 ring-1 ring-white/5 transition-transform duration-300 group-hover:scale-110`}>

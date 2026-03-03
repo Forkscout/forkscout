@@ -33,8 +33,8 @@ const colors: Record<string, ColorDef> = {
 };
 
 const fadeBlur: Variants = {
-    hidden: { opacity: 0, y: 30, filter: "blur(10px)" },
-    show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } },
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } },
 };
 
 export function FeaturesSection() {
@@ -72,7 +72,7 @@ function BentoCard({ feature: f, index: i }: { feature: typeof features[0]; inde
             className={`group ${f.span}`}>
             <motion.div whileHover={{ y: -4, scale: 1.01 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                className="relative h-full overflow-hidden rounded-2xl border border-border/50 bg-card/40 p-6 ring-1 ring-transparent backdrop-blur-md transition-all duration-300 hover:shadow-2xl"
+                className="relative h-full overflow-hidden rounded-2xl border border-border/50 bg-card/80 p-6 ring-1 ring-transparent transition-colors duration-300 hover:shadow-2xl sm:bg-card/40 sm:backdrop-blur-md"
                 style={{ willChange: "transform" }}>
                 {/* Animated gradient border on hover */}
                 <div className={`pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100 ${c.ring}`}

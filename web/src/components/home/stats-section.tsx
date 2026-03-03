@@ -51,7 +51,7 @@ function StatCard({ stat, index }: { stat: typeof stats[0]; index: number }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.08, duration: 0.5 }}
-            className="group relative flex flex-col items-center gap-2 rounded-2xl border border-border/30 bg-card/30 px-4 py-6 backdrop-blur-sm transition-all duration-300 hover:border-border/50 hover:bg-card/50"
+            className="group relative flex flex-col items-center gap-2 rounded-2xl border border-border/30 bg-card/80 px-4 py-6 transition-colors duration-300 hover:border-border/50 hover:bg-card sm:bg-card/30 sm:backdrop-blur-sm"
         >
             <stat.icon className={`h-5 w-5 ${stat.color} opacity-60 transition-opacity group-hover:opacity-100`} />
             <span className={`text-3xl font-bold tabular-nums tracking-tight ${stat.color}`}>
