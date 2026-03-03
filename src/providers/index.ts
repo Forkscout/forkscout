@@ -12,6 +12,7 @@ import {
     type OpenAICompatibleProvider,
 } from "@/providers/open_ai_compatible_provider.ts";
 import { createOpenRouterProvider } from "@/providers/openrouter_provider.ts";
+import { createOpenAIProvider } from "@/providers/openai_provider.ts";
 import { createAnthropicProvider } from "@/providers/anthropic_provider.ts";
 import { createGoogleProvider } from "@/providers/google_provider.ts";
 import { createXaiProvider } from "@/providers/xai_provider.ts";
@@ -27,6 +28,7 @@ import { createPerplexityProvider } from "@/providers/perplexity_provider.ts";
 
 const registry: Record<string, () => OpenAICompatibleProvider> = {
     openrouter: () => createOpenRouterProvider(),
+    openai: () => createOpenAIProvider(),
     anthropic: () => createAnthropicProvider(),
     google: () => createGoogleProvider(),
     xai: () => createXaiProvider(),
@@ -35,9 +37,12 @@ const registry: Record<string, () => OpenAICompatibleProvider> = {
     huggingface: () => createHuggingFaceProvider(),
     deepseek: () => createDeepSeekProvider(),
     perplexity: () => createPerplexityProvider(),
-    // Add more providers below, e.g.:
-    // groq: () => createOpenAICompatibleProvider({ name: "groq", baseURL: "https://api.groq.com/openai/v1", apiKey: process.env.GROQ_API_KEY ?? "" }),
-    // together: () => createOpenAICompatibleProvider({ name: "together", baseURL: "https://api.together.xyz/v1", apiKey: process.env.TOGETHER_API_KEY ?? "" }),
+    // OpenAI-compatible: Ollama, LM Studio, vLLM, LocalAI, or any custom endpoint
+    openai_compatible: () => createOpenAICompatibleProvider({
+        name: "openai_compatible",
+        baseURL: process.env.OPENAI_COMPATIBLE_BASE_URL ?? "http://localhost:11434/v1",
+        apiKey: process.env.OPENAI_COMPATIBLE_API_KEY ?? "ollama",
+    }),
 };
 
 // Cache instantiated providers
