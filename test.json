@@ -1,0 +1,52 @@
+{
+    "key": {
+        "remoteJid": "196207594975310@lid",
+        "remoteJidAlt": "919878051308@s.whatsapp.net",
+        "fromMe": false,
+        "id": "2A5397B8E3E7F1801EAF",
+        "participant": "",
+        "addressingMode": "lid"
+    },
+    "messageTimestamp": 1772469333,
+    "pushName": "Suru",
+    "broadcast": false,
+    "message": {
+        "imageMessage": {
+            "url": "https://mmg.whatsapp.net/v/t62.7118-24/583579886_1821198318526775_314251741226873033_n.enc?ccb=11-4&oh=01_Q5Aa3wGd2s5wmDmpKJ3dlKI7RhZ1xU12OoeLTtlkUXPEA6YcdA&oe=69CD271B&_nc_sid=5e03e0&mms3=true",
+            "mimetype": "image/jpeg",
+            "fileSha256": "wqcPQGLZJSI/HN8VVotHYzEKvqXA5kI5LCFzaanA2pU=",
+            "fileLength": "57481",
+            "height": 1600,
+            "width": 738,
+            "mediaKey": "KAPyQhHGXzFV2QlM9aqXI/j5+maX6H9AYzc6r6uu5js=",
+            "fileEncSha256": "Fej0fV+Rz8n/hfGHDp8rVq4ZkJMCG4IUxuKxYCXcKRI=",
+            "directPath": "/v/t62.7118-24/583579886_1821198318526775_314251741226873033_n.enc?ccb=11-4&oh=01_Q5Aa3wGd2s5wmDmpKJ3dlKI7RhZ1xU12OoeLTtlkUXPEA6YcdA&oe=69CD271B&_nc_sid=5e03e0",
+            "mediaKeyTimestamp": "1772455066",
+            "jpegThumbnail": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wgARCABIAEgDASIAAhEBAxEB/8QAGQABAQEBAQEAAAAAAAAAAAAAAAIBAwQG/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/2gAMAwEAAhADEAAAAPoprC65dDQOfSQCZqTrvLoawbm+SvQ1GIo1PQlYcO6pajmizenKiwAYCMBYUADAf//EABcRAQEBAQAAAAAAAAAAAAAAAAEwMSD/2gAIAQIBAT8AgC5yKZT/xAAUEQEAAAAAAAAAAAAAAAAAAABA/9oACAEDAQE/AE//xAAsEAACAQMCBQEIAwAAAAAAAAABAhEAAxIgIRMiMUFhMgQFEBRRcZGhIzNC/9oACAEBAAE/AHNwNyqCKyvT6BSFiOYQdLG4OgBpcu4pzcnlAipvR0FE3uwFLMc3XQ+WPL1pcu9PeS20NP4r5i3ljJn7amOIk0rhjAmnuIrhWG5o3VBPIdvFcYR6TSsGAOi57wsW3KGdutI6uoZehE0wQuMoy7Viu+/7rFfr+64a+a4Y81gPPwf2Ow7FmTc0qhQABEU9hGvC4xMjtXBSSd9/NcBPP5oAAQNMbzVyzndV8iI7fWjZkzm1JbwPqJ++qN5q7auteVleFHUUbdzeLlYXI/spFZfU06d5p+JmuMY96PGkwViv5p/zSZRzxPjTvPiv//4AAwD/2Q==",
+            "contextInfo": {
+                "statusSourceType": "IMAGE"
+            },
+            "firstScanSidecar": "n/v1FaTVnPWnKQ==",
+            "firstScanLength": 5604,
+            "scansSidecar": "n/v1FaTVnPWnKVfUZTX+EQhVl8ne8SuHwkAyKfCuG1B5pfUkjQiCeA==",
+            "scanLengths": [
+                5604,
+                27812,
+                9854,
+                14209
+            ],
+            "midQualityFileSha256": "NxcvxitSU7r8JkDpG5AktEaFIuDNgMxEl2FZLWsM0cY=",
+            "imageSourceType": "USER_IMAGE"
+        },
+        "messageContextInfo": {
+            "deviceListMetadata": {
+                "senderKeyHash": "3DbHmMxqTMI/fg==",
+                "senderTimestamp": "1772443147",
+                "recipientKeyHash": "a51xviXZRPSmgw==",
+                "recipientTimestamp": "1765113007"
+            },
+            "deviceListMetadataVersion": 2,
+            "messageSecret": "UWLU+JFC/GDsczpzcM0FdqVDjzCfBF96nbQWkdI2mU0="
+        }
+    }
+}

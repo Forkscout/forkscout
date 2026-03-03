@@ -1,36 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+  <img src="public/logo.svg" width="80" alt="ForkScout Logo" />
+  <h1>ForkScout Frontend</h1>
+  <p><strong>Landing page for <a href="https://www.forkscout.com">forkscout.com</a></strong></p>
+
+  <p>
+    <a href="https://www.forkscout.com">Website</a> ·
+    <a href="https://github.com/marsnext/forkscout">Agent Repo</a> ·
+    <a href="https://github.com/marsnext/forkscout-frontend/issues">Issues</a>
+  </p>
+</div>
+
+---
+
+## Overview
+
+Marketing and documentation landing page for **ForkScout** — an autonomous AI agent that runs shell commands, browses the web, reads and writes files, remembers everything, and modifies its own code.
+
+### Sections
+
+| Section          | Description                                                                       |
+| ---------------- | --------------------------------------------------------------------------------- |
+| **Hero**         | Logo, animated tagline, install commands, CTA buttons                             |
+| **Tech Marquee** | Scrolling cards showcasing the tech stack (Bun, TypeScript, AI SDK v6, MCP, etc.) |
+| **Features**     | 9 capability cards — shell access, memory, MCP, multi-channel, and more           |
+| **Use Cases**    | 6 real-world scenarios — DevOps, code review, security, research                  |
+| **Providers**    | 9 LLM provider badges with logos + config code block                              |
+| **CTA**          | Final call-to-action with install button                                          |
+
+## Tech Stack
+
+| Layer      | Technology                                                                |
+| ---------- | ------------------------------------------------------------------------- |
+| Framework  | [Next.js 16](https://nextjs.org) (App Router, Turbopack)                  |
+| Runtime    | [Bun](https://bun.sh)                                                     |
+| Language   | TypeScript (strict)                                                       |
+| Styling    | [Tailwind CSS v4](https://tailwindcss.com)                                |
+| Components | [shadcn/ui](https://ui.shadcn.com) + [Radix UI](https://www.radix-ui.com) |
+| Animations | [Framer Motion](https://motion.dev)                                       |
+| Theming    | [next-themes](https://github.com/pacocoursey/next-themes) (light + dark)  |
+| Icons      | [Lucide React](https://lucide.dev)                                        |
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- **Bun** ≥ 1.0 — [Install Bun](https://bun.sh)
+
+### Install & Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone
+git clone https://github.com/marsnext/forkscout-frontend.git
+cd forkscout-frontend
+
+# Install dependencies
+bun install
+
+# Start dev server (port 3000)
+bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Build for Production
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+bun run build   # creates optimized .next/ output
+bun start       # starts production server on :3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+```
+src/
+├── app/
+│   ├── globals.css          # Tailwind v4 theme (oklch purple palette)
+│   ├── layout.tsx           # Root layout with ThemeProvider
+│   └── page.tsx             # Home page — composes all sections
+├── components/
+│   ├── home/
+│   │   ├── hero-section.tsx        # Hero with logo, rotating text, install block
+│   │   ├── tech-marquee.tsx        # Scrolling tech stack cards
+│   │   ├── tech-data.ts            # Tech stack item definitions
+│   │   ├── features-section.tsx    # 9 feature cards
+│   │   ├── use-cases-section.tsx   # 6 use case cards
+│   │   ├── providers-section.tsx   # Provider badges + code block
+│   │   ├── providers-data.ts       # Provider metadata + logo URLs
+│   │   ├── cta-section.tsx         # CTA + footer
+│   │   ├── animated-bg.tsx         # Floating gradient orbs background
+│   │   └── rotating-text.tsx       # Cycling text animation
+│   ├── ui/                  # shadcn/ui components (button, card, badge, etc.)
+│   ├── forkscout-logo.tsx   # SVG logo React component
+│   ├── theme-provider.tsx   # next-themes wrapper
+│   └── theme-toggle.tsx     # Light/dark toggle button
+├── lib/
+│   └── utils.ts             # cn() helper (clsx + tailwind-merge)
+public/
+└── logo.svg                 # ForkScout trident logo (also used as favicon)
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Hosted on [Vercel](https://vercel.com). Every push to `main` triggers automatic deployment.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Environment | URL                                            |
+| ----------- | ---------------------------------------------- |
+| Production  | [www.forkscout.com](https://www.forkscout.com) |
 
-## Deploy on Vercel
+### Deploy Your Own
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/marsnext/forkscout-frontend)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Related Repos
+
+| Repo                                                                     | Description                                |
+| ------------------------------------------------------------------------ | ------------------------------------------ |
+| [forkscout](https://github.com/marsnext/forkscout)                       | The autonomous AI agent (Bun + TypeScript) |
+| [forkscout-memory-mcp](https://github.com/marsnext/forkscout-memory-mcp) | Persistent memory MCP server               |
+
+## License
+
+MIT — see [LICENSE](LICENSE) for details.
+
+---
+
+<div align="center">
+  Built by <a href="https://github.com/marsnext"><strong>Martian Academy</strong></a>
+</div>

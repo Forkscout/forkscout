@@ -132,8 +132,9 @@ const COMMANDS: Record<string, () => Promise<void>> = {
         // Read web port from next.js config or default to 3000
         const webPort = process.env.WEB_PORT || "3000";
         const host = process.env.WEB_HOST || "localhost";
-        const chatUrl = `http://${host}:${webPort}/chat?token=${token}`;
-        const dashUrl = `http://${host}:${webPort}/dashboard?token=${token}`;
+        const loginUrl = `http://${host}:${webPort}/web/login?token=${token}`;
+        const chatUrl = `http://${host}:${webPort}/web/chat`;
+        const dashUrl = `http://${host}:${webPort}/web`;
 
         // Kill any existing web server on this port (before banner for clean output)
         await killWebServer(webPort);
@@ -148,7 +149,7 @@ const COMMANDS: Record<string, () => Promise<void>> = {
         let copied = false;
         try {
             const proc = Bun.spawn(["pbcopy"], { stdin: "pipe" });
-            proc.stdin.write(chatUrl);
+            proc.stdin.write(loginUrl);
             proc.stdin.end();
             await proc.exited;
             copied = true;
@@ -164,10 +165,11 @@ const COMMANDS: Record<string, () => Promise<void>> = {
                 `  ${b}⑂  ForkScout Web Dashboard${r}`,
                 ``,
                 `  🔑 Auth Token: ${d}${token.slice(0, 8)}…${token.slice(-4)}${r}`,
+                `  � Login:      ${g}${loginUrl}${r}`,
                 `  💬 Chat:       ${g}${chatUrl}${r}`,
                 `  📊 Dashboard:  ${g}${dashUrl}${r}`,
             ];
-            if (copied) lines.push(`  📋 Chat URL copied to clipboard!`);
+            if (copied) lines.push(`  📋 Login URL copied to clipboard!`);
             lines.push(``);
             lines.push(`  ${g}● Server ready${r} on port ${webPort}  ${d}Press Ctrl+C to stop.${r}`);
             lines.push(``);
@@ -263,8 +265,9 @@ const COMMANDS: Record<string, () => Promise<void>> = {
         };
         const webPort = process.env.WEB_PORT || "3000";
         const host = process.env.WEB_HOST || "localhost";
-        const chatUrl = `http://${host}:${webPort}/chat?token=${token}`;
-        const dashUrl = `http://${host}:${webPort}/dashboard?token=${token}`;
+        const loginUrl = `http://${host}:${webPort}/web/login?token=${token}`;
+        const chatUrl = `http://${host}:${webPort}/web/chat`;
+        const dashUrl = `http://${host}:${webPort}/web`;
 
         // Kill any existing web server on this port (before banner for clean output)
         await killWebServer(webPort);
@@ -277,6 +280,7 @@ const COMMANDS: Record<string, () => Promise<void>> = {
                 ``,
                 `  ${b}⑂  ForkScout Web (dev mode)${r}`,
                 ``,
+                `  🔗 Login:      ${g}${loginUrl}${r}`,
                 `  💬 Chat:       ${g}${chatUrl}${r}`,
                 `  📊 Dashboard:  ${g}${dashUrl}${r}`,
                 ``,
