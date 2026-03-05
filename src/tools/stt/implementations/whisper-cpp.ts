@@ -2,44 +2,45 @@
 
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
-import path from 'node:path';
 
 /**
- * Whisper.cpp native transcription (no Python)
- * Uses llama.cpp’s optimized whisper implementation
+ * Whisper CLI transcription (no Python) - uses OpenAI's official whisper binary
+ * Available on Mac via: brew install whisper
  */
-export async function transcribeWithWhisperCpp(audioPath: string, language: string | null = null): Promise<string> {
-  const whisperCppPath = '/usr/local/bin/whisper'; // Default install path
+export async function transcribeWithWhisperCpp(
+  audioPath: string,
+  language: string | null = null
+): Promise<string> {
+  const whisperPath = '/usr/local/bin/whisper';
 
-  if (!fs.existsSync(whisperCppPath)) {
-    throw new Error('Whisper.cpp not found. Install with: brew install whisper');
-  }
-
-  const modelPath = path.join(path.dirname(whisperCppPath), 'models', 'ggml-base.en.bin');
-  if (!fs.existsSync(modelPath)) {
-    throw new Error('Whisper model not found. Run: wget https://ggml.com/models/whisper/ggml-base.en.bin -O ' + modelPath);
+  if (!fs.existsSync(whisperPath)) {
+    throw new Error('Whisper CLI not found. Install with: brew install whisper');
   }
 
   return new Promise((resolve, reject) => {
-    const args = [
-      '-m', modelPath,
-      '-f', audioPath,
-      '-otxt'
-    ];
+    const args = ['--model', 'base', '--file', audioPath];
 
     if (language) {
-      args.push('-l', language);
+      args.push('--language', language);
     }
 
-    const child = spawn(whisperCppPath, args);
+    const child = spawn(whisperPath, args);
     let output = '';
 
     child.stdout.on('data', (data) => {
-      output += data.toString();
+      const text = data.toString();
+      // Whisper CLI outputs to stderr, not stdout
+      output += text;
     });
 
     child.stderr.on('data', (data) => {
-      console.error('Whisper.cpp stderr:', data.toString());
+      const text = data.toString();
+      // Check for errors or transcription output
+      if (text.includes('Transcription complete') || text.includes('[00:00.000 -->')) {
+        output += text;
+      } else {
+        console.error('Whisper stderr:', text);
+      }
     });
 
     child.on('error', (err) => {
@@ -50,7 +51,7 @@ export async function transcribeWithWhisperCpp(audioPath: string, language: stri
       if (code === 0) {
         resolve(output.trim());
       } else {
-        reject(new Error(`Whisper.cpp exited with code ${code}`));
+        reject(new Error(`Whisper exited with code ${code}`));
       }
     });
   });
