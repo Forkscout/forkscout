@@ -6,7 +6,6 @@ import { join, relative } from "path";
 
 
 const PROJECT_ROOT = process.cwd();
-const SRC_DIR = join(PROJECT_ROOT, "src");
 const AGENTS_TOOLS_DIR = join(PROJECT_ROOT, ".agents", "tools");
 
 /** Extract description from a .ts file — tries line 1 "// path — desc", then line 2 */
@@ -72,11 +71,17 @@ function buildMap(dir: string, depth = 0): string[] {
         try { return statSync(join(dir, e)).isDirectory(); } catch { return false; }
     });
     const files = entries.filter((e) => {
-        try { return statSync(join(dir, e)).isFile() && e.endsWith(".ts") && !e.endsWith(".d.ts"); } catch { return false; }
+        try {
+            return statSync(join(dir, e)).isFile()
+                && (e.endsWith(".ts") || e.endsWith(".tsx"))
+                && !e.endsWith(".d.ts");
+        } catch { return false; }
     });
 
+    const SKIP_DIRS = new Set(["node_modules", "dist", "build", ".git", ".next", ".turbo", ".cache", ".vscode", "coverage"]);
+
     for (const folder of folders) {
-        if (folder === "node_modules" || folder.startsWith(".")) continue;
+        if (SKIP_DIRS.has(folder) || folder.startsWith(".")) continue;
         const folderPath = join(dir, folder);
         const desc = getFolderDescription(folderPath);
         const rel = relative(PROJECT_ROOT, folderPath);
@@ -108,7 +113,7 @@ export const project_sourcemap_tools = tool({
         depth: z.number().optional().describe("Max folder depth to show. Default: unlimited."),
     }),
     execute: async (input) => {
-        const srcLines = buildMap(SRC_DIR);
+        const projectLines = buildMap(PROJECT_ROOT);
 
         // .agents/tools — list filenames only (no deep scan needed)
         const agentsToolsFiles: string[] = [];
@@ -127,8 +132,8 @@ export const project_sourcemap_tools = tool({
         const parts = [
             `project_root: ${PROJECT_ROOT}`,
             "",
-            "## src/",
-            srcLines.join("\n") || "No source files found in src/",
+            "## project tree/",
+            projectLines.join("\n") || "No source files found.",
         ];
 
         if (agentsToolsFiles.length > 0) {
