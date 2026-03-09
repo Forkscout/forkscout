@@ -67,7 +67,8 @@ export const spawn_agent_tools = tool({
                 const result = await runAgent(effectiveConfig, {
                     userMessage: item.task,
                     role: input.role ?? "self",
-                    excludeTools: input.excludeTools,
+                    // Always block recursive spawning — sub-agents cannot spawn sub-agents.
+                    excludeTools: [...(input.excludeTools ?? []), "spawn_agent_tools"],
                     meta: { channel: "sub-agent", sessionKey },
                 });
                 return { index, success: true, result: result.text, steps: result.steps, sessionKey };
