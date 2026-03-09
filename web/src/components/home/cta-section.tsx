@@ -68,9 +68,9 @@ export function CtaSection() {
                 </div>
                 <p className="flex flex-wrap items-center justify-center gap-1.5 text-sm text-muted-foreground">
                     Built with <Heart className="h-3.5 w-3.5 fill-pink-500 text-pink-500" /> by{" "}
-                    <a href="https://github.com/marsnext" target="_blank" rel="noopener noreferrer"
+                    <a href="https://github.com/martianacademy" target="_blank" rel="noopener noreferrer"
                         className="font-medium text-purple-600 underline-offset-4 hover:underline dark:text-purple-400">
-                        MarsNext
+                        Martian Academy
                     </a>
                     <span className="text-muted-foreground/40">·</span> Open source under MIT
                 </p>

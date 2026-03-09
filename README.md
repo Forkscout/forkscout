@@ -1591,4 +1591,4 @@ MIT
 
 ## Author
 
-Built by [Martian Academy](https://github.com/marsnext). ForkScout is an ongoing experiment in autonomous AI agents — built to understand what it means for a program to have genuine agency, memory, and presence.
+Built by [Martian Academy](https://github.com/martianacademy). ForkScout is an ongoing experiment in autonomous AI agents — built to understand what it means for a program to have genuine agency, memory, and presence.
