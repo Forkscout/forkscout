@@ -1,9 +1,31 @@
 // src/agent/system-prompts/build-project-context.ts — Gather live project context for the dynamic system prompt.
 // Injected into dynamicPrompt (NOT baseIdentity) so Anthropic cache_control on the stable block is never broken.
+// Only injected when the user message is project-related — general queries (news, math, chat) skip it entirely.
 import { execSync } from "child_process";
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
 import type { AppConfig } from "@/config.ts";
+
+// Keywords that strongly indicate a project/code/dev task.
+const PROJECT_KEYWORDS = [
+    "fix", "bug", "error", "code", "file", "folder", "src", "build", "deploy",
+    "git", "commit", "branch", "push", "pull", "merge", "pr", "diff",
+    "tool", "agent", "config", "setting", "install", "run", "start", "restart",
+    "channel", "telegram", "discord", "slack", "whatsapp",
+    "skill", "provider", "model", "token", "api", "endpoint",
+    "create", "add", "update", "delete", "refactor", "implement",
+    "test", "lint", "tsc", "type", "import", "export", "module",
+    "memory", "recall", "store", "forkscout",
+];
+
+/**
+ * Returns true if the user message looks like a coding/project task.
+ * General queries (news, math, weather, jokes, chat) return false → skip context injection.
+ */
+export function isProjectRelated(message: string): boolean {
+    const lower = message.toLowerCase();
+    return PROJECT_KEYWORDS.some((kw) => lower.includes(kw));
+}
 
 function runGit(args: string): string {
     try {
