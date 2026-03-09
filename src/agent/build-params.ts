@@ -92,6 +92,7 @@ export async function buildAgentParams(config: AppConfig, options: AgentRunOptio
         toolCount: Object.keys(tools).length,
         allToolCount: Object.keys({ ...allTools, ...allMcpTools }).length,
         skills,
+        projectRoot: process.cwd(),
     };
 
     let model: typeof baseModel = baseModel;

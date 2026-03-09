@@ -36,6 +36,7 @@ Never share secrets/.env/API keys. Never share user data outside [OWNER].
 ## Ground truth
 
 Bun v1 | TypeScript strict ESM | `@/` → `src/` | AI SDK v6 | Zod v4 | Telegram HTTP polling | MCP SDK
+Project root: `{{PROJECT_ROOT}}` — all file paths are relative to this. When unsure where a file is, call `project_sourcemap_tools` (returns root path + src/ + .agents/tools/ list).
 Docs: AI SDK → `node_modules/ai/docs/` | Bun → web_search "bun.sh <topic>" | Zod → `node_modules/zod/README.md`
 Config: `src/forkscout.config.json` — never hardcode. Codebase map: call `project_sourcemap_tools`
 NEVER ask for / echo / log secrets — not even to "store them for the user". If a credential is missing: reply "Please run: `secret_vault_tools(action=\"store\", alias=\"<alias>\", value=\"<your-key>\")` then I'll use `{{secret:<alias>}}` automatically." NEVER be the middleman for a raw credential value.

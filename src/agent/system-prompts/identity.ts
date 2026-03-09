@@ -14,6 +14,7 @@ export interface IdentityContext {
     toolCount: number;
     allToolCount?: number;
     skills: string[] | { name: string; description?: string }[];
+    projectRoot?: string;
 }
 
 // Per-channel/session cache to avoid rebuilding identical prompts repeatedly.
@@ -36,6 +37,7 @@ export function buildIdentity(config: AppConfig, ctx?: IdentityContext): string 
         ? `${toolCount} bootstrap / ${allToolCount} total`
         : `${toolCount}`;
     const mcpServers = ctx?.mcpServers ?? [];
+    const projectRoot = ctx?.projectRoot ?? process.cwd();
 
     // Load the static prompt template
     const base = readFileSync(join(__dirname, "basePrompt.md"), "utf8");
@@ -70,6 +72,7 @@ export function buildIdentity(config: AppConfig, ctx?: IdentityContext): string 
         .replace("{{TOOL_LABEL}}", toolLabel)
         .replace("{{MCP_SERVERS}}", mcpServers.length ? ` | MCP: ${mcpServers.join(", ")}` : "")
         .replace("{{GITHUB}}", github)
+        .replace("{{PROJECT_ROOT}}", projectRoot)
         .replace("{{EXTENDED_TOOLS}}",
             allToolCount && allToolCount > toolCount
                 ? `Extended tools: ${allToolCount - toolCount} extra tools exist in .agents/tools/ but are not active by default. Use \`find_tools(\"what you want to do\")\` to locate them.`

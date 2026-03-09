@@ -7,6 +7,7 @@ import { join, relative } from "path";
 
 const PROJECT_ROOT = process.cwd();
 const SRC_DIR = join(PROJECT_ROOT, "src");
+const AGENTS_TOOLS_DIR = join(PROJECT_ROOT, ".agents", "tools");
 
 /** Extract description from a .ts file — tries line 1 "// path — desc", then line 2 */
 function getFileDescription(filePath: string): string {
@@ -95,23 +96,49 @@ function buildMap(dir: string, depth = 0): string[] {
 
 export const project_sourcemap_tools = tool({
     description:
-        "Returns a structured map of the src/ directory — every folder and file with one-line descriptions. " +
+        "Returns a structured map of the project — src/ tree, .agents/tools/, and the absolute project root path. " +
         "WHEN TO USE: you don't know if a file or service already exists; " +
         "looking for the right folder before creating a new file; " +
-        "getting a quick overview of the project after a fresh start or context reset. " +
+        "getting a quick overview after a fresh start or context reset. " +
         "WHEN NOT TO USE: if you already know the exact folder (e.g. 'src/tools/') — use list_dir_tools or read_folder_standard_tools instead. " +
         "MANDATORY when a needed tool or module isn't found — call this ONCE to locate it before creating anything new. " +
         "Also use 'depth' to limit output for large projects: depth:2 shows top 2 levels only. " +
-        "Example: {} with no args — returns the full src/ tree.",
+        "Example: {} with no args — returns the full tree.",
     inputSchema: z.object({
         depth: z.number().optional().describe("Max folder depth to show. Default: unlimited."),
     }),
     execute: async (input) => {
-        const lines = buildMap(SRC_DIR);
-        const output = lines.join("\n");
+        const srcLines = buildMap(SRC_DIR);
+
+        // .agents/tools — list filenames only (no deep scan needed)
+        const agentsToolsFiles: string[] = [];
+        if (existsSync(AGENTS_TOOLS_DIR)) {
+            try {
+                readdirSync(AGENTS_TOOLS_DIR)
+                    .filter((f) => f.endsWith(".ts"))
+                    .sort()
+                    .forEach((f) => {
+                        const desc = getFileDescription(join(AGENTS_TOOLS_DIR, f));
+                        agentsToolsFiles.push(`.agents/tools/${f}${desc ? `  — ${desc}` : ""}`);
+                    });
+            } catch { /* ignore */ }
+        }
+
+        const parts = [
+            `project_root: ${PROJECT_ROOT}`,
+            "",
+            "## src/",
+            srcLines.join("\n") || "No source files found in src/",
+        ];
+
+        if (agentsToolsFiles.length > 0) {
+            parts.push("", "## .agents/tools/  — on-demand extended tools (call via call_tool)");
+            parts.push(agentsToolsFiles.join("\n"));
+        }
+
         return {
             success: true,
-            sourcemap: output || "No source files found in src/",
+            sourcemap: parts.join("\n"),
         };
     },
 });
