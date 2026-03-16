@@ -1,6 +1,19 @@
-# ForkScout Agent
+<p align="center">
+  <img src="web/public/forkscout-logo.png" alt="ForkScout" width="140" />
+</p>
 
-> **An autonomous AI agent with real tools, persistent memory, multi-channel presence, and the ability to modify and restart itself.**
+<h1 align="center">ForkScout Agent</h1>
+
+<p align="center">
+  <strong>An autonomous AI agent with real tools, persistent memory, multi-channel presence, and the ability to modify and restart itself.</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Forkscout/forkscout/stargazers"><img src="https://img.shields.io/github/stars/Forkscout/forkscout?style=flat-square&color=7B6CF0" alt="Stars"></a>
+  <a href="https://github.com/Forkscout/forkscout/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Forkscout/forkscout?style=flat-square&color=7B6CF0" alt="License"></a>
+  <a href="https://discord.gg/forkscout"><img src="https://img.shields.io/badge/Discord-Join-7B6CF0?style=flat-square&logo=discord&logoColor=white" alt="Discord"></a>
+  <a href="https://github.com/Forkscout/forkscout/issues"><img src="https://img.shields.io/github/issues/Forkscout/forkscout?style=flat-square&color=7B6CF0" alt="Issues"></a>
+</p>
 
 ForkScout is not a chatbot wrapper. It is a fully autonomous agent that runs as a long-lived process on your server, connects to Telegram (and optionally a terminal), executes real shell commands, reads and writes files, browses the web, searches the internet, manages its own codebase, and remembers everything across sessions. It has no hard-coded restrictions — it reasons, decides, and acts from its own judgment.
 

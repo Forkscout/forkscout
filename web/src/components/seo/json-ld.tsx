@@ -19,7 +19,7 @@ const organizationSchema = {
     "@type": "Organization",
     name: "ForkScout",
     url: siteUrl,
-    logo: `${siteUrl}/logo.svg`,
+    logo: `${siteUrl}/forkscout-logo.png`,
     sameAs: [
         "https://github.com/Forkscout/forkscout",
     ],
