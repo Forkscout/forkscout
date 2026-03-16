@@ -246,5 +246,25 @@
     },
     "memory": {
         "enabled": true
+    },
+    "vault": {
+        "channels": {
+            "telegram": [
+                "TELEGRAM_BOT_TOKEN",
+                "TELEGRAM_OWNER_IDS"
+            ],
+            "sms": [
+                "TWILIO_ACCOUNT_SID",
+                "TWILIO_AUTH_TOKEN"
+            ],
+            "voice": [
+                "TWILIO_ACCOUNT_SID",
+                "TWILIO_AUTH_TOKEN"
+            ]
+        },
+        "speech": {
+            "tts": "ELEVENLABS_API_KEY",
+            "stt": "ELEVENLABS_API_KEY"
+        }
     }
 }

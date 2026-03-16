@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="glow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+      <feColorMatrix in="blur" type="matrix"
+        values="0 0 0 0 0.44  0 0 0 0 0.37  0 0 0 0 0.90  0 0 0 0.5 0"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <radialGradient id="bg" cx="50%" cy="44%" r="52%">
+      <stop offset="0%" stop-color="#151519"/>
+      <stop offset="100%" stop-color="#060608"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="250" fill="url(#bg)"/>
+
+  <!--
+    TRIDENT — single unified outline path.
+    
+    The shape from the original image:
+    - A vertical handle at the bottom center
+    - Splits into a wide V shape
+    - The V has two diagonal arms going up-outward
+    - Each arm ends in an arrowhead pointing outward/upward at ~45 degrees
+    - At each arm's shoulder, there's a small horizontal flare going further outward
+    - A center prong goes straight up from the V junction, ending in an arrowhead
+    - Eyes sit in the V junction area between the diagonal arms
+    
+    Tracing clockwise from bottom-left of handle:
+  -->
+  <g filter="url(#glow)">
+    <path fill="#7B6CF0" d="
+      M 246,405
+      L 246,308
+      C 246,296 240,290 232,282
+
+      L 186,236
+      L 170,248
+      L 148,254
+      L 136,238
+      L 156,224
+
+      L 174,210
+      L 144,164
+      L 162,130
+      L 182,116
+
+      L 208,158
+      L 222,126
+      L 228,108
+      L 240,108
+      L 240,260
+
+      L 250,260
+      L 250,98
+      L 256,76
+      L 262,98
+      L 262,260
+
+      L 272,260
+      L 272,108
+      L 284,108
+      L 290,126
+      L 304,158
+
+      L 330,116
+      L 350,130
+      L 368,164
+
+      L 338,210
+      L 356,224
+      L 376,238
+      L 364,254
+
+      L 342,248
+      L 326,236
+
+      L 280,282
+      C 272,290 266,296 266,308
+      L 266,405
+      Z
+    "/>
+  </g>
+
+  <!-- Left eye -->
+  <ellipse cx="228" cy="264" rx="16" ry="12" fill="#120f28" stroke="#7B6CF0" stroke-width="2.5"/>
+  <circle cx="228" cy="264" r="6" fill="#6858D4"/>
+  <circle cx="228" cy="264" r="2.8" fill="#120f28"/>
+  <circle cx="226.5" cy="262.5" r="1.2" fill="#ccc4ff" opacity="0.7"/>
+
+  <!-- Right eye -->
+  <ellipse cx="284" cy="264" rx="16" ry="12" fill="#120f28" stroke="#7B6CF0" stroke-width="2.5"/>
+  <circle cx="284" cy="264" r="6" fill="#6858D4"/>
+  <circle cx="284" cy="264" r="2.8" fill="#120f28"/>
+  <circle cx="282.5" cy="262.5" r="1.2" fill="#ccc4ff" opacity="0.7"/>
+</svg>

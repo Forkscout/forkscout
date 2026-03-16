@@ -74,6 +74,21 @@ export interface SelfJobConfig {
 export interface ToolDefaults { [toolName: string]: Record<string, unknown> }
 export interface N8nConfig { baseUrl: string; workflows?: string[] }
 
+export interface VaultConfig {
+    /** Vault alias for the primary LLM provider API key */
+    llmApiKey?: string;
+    /** Channel name → vault alias(es) for that channel's secrets */
+    channels?: Record<string, string | string[]>;
+    /** Speech service vault aliases */
+    speech?: { tts?: string; stt?: string };
+    /** Vault alias for image generation API key */
+    imageGeneration?: string;
+    /** Vault alias for video generation API key */
+    videoGeneration?: string;
+    /** Named service → vault alias */
+    services?: Record<string, string>;
+}
+
 export interface AppConfig {
     channels: ChannelsConfig;
     llm: LLMConfig;
@@ -89,6 +104,7 @@ export interface AppConfig {
     toolDefaults?: ToolDefaults;
     skills?: { dirs?: string[] };
     n8n?: N8nConfig;
+    vault?: VaultConfig;
     embeddings?: {
         enabled: boolean; provider: "openrouter" | "google"; model: string;
         topK: number; chunkMaxTokens: number;

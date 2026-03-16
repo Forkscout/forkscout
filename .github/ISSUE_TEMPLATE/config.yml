@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/Forkscout/forkscout/discussions
+    about: Ask questions, share ideas, or show what you've built
+  - name: 🎮 Discord
+    url: https://discord.gg/forkscout
+    about: Chat with the community and contributors

@@ -68,10 +68,13 @@ export function ensureVaultKey(envVars: Map<string, string>): { vaultKey: string
 
 // ── Secret detection & migration ─────────────────────────────────────────────
 
-const SECRET_PATTERN = /KEY|TOKEN|SECRET|PASSWORD|SID|AUTH/i;
+const SECRET_PATTERN = /KEY|TOKEN|SECRET|PASSWORD|SID|AUTH|DATABASE_URL|BOT_ID|LOGIN_USERNAME/i;
+
+/** Extra env vars to always treat as secrets (exact match). */
+const EXTRA_SECRET_VARS = new Set(["TWILIO_PHONE_NUMBER"]);
 
 export function isSecretVar(name: string): boolean {
-    return SECRET_PATTERN.test(name);
+    return SECRET_PATTERN.test(name) || EXTRA_SECRET_VARS.has(name);
 }
 
 /** Migrate secrets from .env to vault. Returns count of migrated secrets. */

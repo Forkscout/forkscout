@@ -8,7 +8,7 @@ import { mkdirSync } from "fs";
 import { manageVaultSecrets } from "@/setup/vault-manager.ts";
 import { c, printSuccess } from "@/setup/shared.ts";
 import { AGENTS_DIR, loadEnvFile, saveEnvFile, ensureVaultKey, isSecretVar, migrateEnvSecretsToVault, loadConfigFile, saveConfigFile } from "@/setup/env-helpers.ts";
-import { buildDefaultConfig } from "@/setup/default-config.ts";
+import { buildDefaultConfig, buildVaultSection } from "@/setup/default-config.ts";
 import { printBanner, showDisclaimer, printSummary } from "@/setup/ui.ts";
 import { stepMainMenu } from "@/setup/step-main-menu.ts";
 import { stepProvider } from "@/setup/step-provider.ts";
@@ -113,6 +113,13 @@ export async function runSetupWizard(): Promise<void> {
             else if (choice === "providers") await configureProviders(cleanEnv, existingConfig);
             else if (choice === "channels") await stepChannels(cleanEnv);
             else if (choice === "media") await stepMedia();
+        }
+
+        // Rebuild vault section in config before saving
+        const cfgBeforeSave = loadConfigFile();
+        if (cfgBeforeSave) {
+            cfgBeforeSave.vault = buildVaultSection(cfgBeforeSave.llm?.provider ?? "openrouter");
+            saveConfigFile(cfgBeforeSave);
         }
 
         // Save .env and show summary
